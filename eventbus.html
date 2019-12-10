@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EventBus</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="EventBus.js"></script>
+        
+        <script type="text/javascript">
+            /**
+             * 
+             * @param {String} name
+             * @returns {Messenger}
+             */
+            function Messenger( name ){
+              
+                var _setup = {
+                    'instance': this,
+                    'inputs': {'txt':null,'btn':null},
+                    'name': name || 'Messenger',
+                    'message': '',
+                    'timestamp': (new Date()).getTime(),
+                    'status': 'waiting'
+                };
+                
+                /**
+                 * 
+                 * @param {String} message
+                 * @returns {Messenger}
+                 */
+                this.send = function( message ){
+                    
+                    EventBus.Instance.register( 'SendMessage' , {
+                        'name': _setup.name,
+                        'message': message
+                    } ).dispatch('SendMessage');
+                    
+                    return this;
+                };
+                /**
+                 * @returns {Messenger}
+                 */
+                this.bind = function(){
+                    
+                    EventBus.Instance.listen( 'UpdateStatus' , function(e){
+                        
+                        if( typeof e.details.message === 'string' && e.details.message.length ){
+                            
+                            _setup.message = e.details.message || '';
+                            
+                            var count = e.details.counter || 0;
+                            
+                            if( count ){
+                                console.log('Validando el mensaje nº ' + count );
+                            }
+                            
+                            _setup.status = count > 9 ? 'completed' : 'updated';
+                        }
+                        else{
+                            _setup.status = 'error';
+                        }
+                        _setup.timestamp = (new Data()).getTime();
+                        
+                        console.log( 'Status: ' + _setup.status );
+                    });
+                    return this;
+                };
+                /**
+                 * 
+                 * @returns {Messenger}
+                 */
+                this.render = function(){            
+                            _setup.inputs.txt = document.createElement('input');
+                            _setup.inputs.txt.type = 'text';
+                            _setup.inputs.txt.placeholder = 'Write to ' + _setup.name;
+
+                            _setup.inputs.btn = document.createElement('button');
+                            _setup.inputs.btn.type = 'button';
+                            _setup.inputs.btn.innerHTML = 'Send';
+                            _setup.inputs.btn.addEventListener('click',function(e){
+        
+                                    e.preventDefault();
+
+                                    var msg = document.getElementById('message');
+                                    if( msg.length ){
+                                        _setup.instance.send( msg );
+                                        console.log(_setup.name + ' is sending a message ...');
+                                    }
+                                    else{
+                                        console.log(_setup.name + ' write something!');
+                                    }
+                                    
+                                    return false;
+                            });
+                            
+                            var box = document.createElement('div');
+                            box.appendChild(_setup.inputs.txt);
+                            box.appendChild(_setup.inputs.btn);
+                            console.log(box);
+                            document.getElementById('messenger').appendChild(box);
+
+                    return this.bind();
+                };
+              
+        
+                return this.render();
+            };
+            /**
+             * 
+             * @returns {Counter}
+             */
+            function Counter(){
+                
+                var _setup = {
+                    'instance': this,
+                    'count': 0
+                };
+                /**
+                 * @param {String} message
+                 * @returns {Counter}
+                 */
+                this.response = function( message ){
+                    
+                    var elapsed = parseInt( Math.random() * 5000 ) + 3000;
+                    console.log( 'Waiting ' + (elapsed / 1000) + ' seconds for response ...');
+                    window.setTimeout( function(){
+                    
+        
+                            EventBus.Instance.register( 'UpdateStatus' , {
+                                'message': message,
+                                'counter': _setup.count
+                            } ).dispatch('UpdateStatus');
+                            
+
+                    }, elapsed );
+                    
+                    return this;
+                };
+                /**
+                 * @returns {Counter}
+                 */
+                this.init = function(){
+                    
+                    EventBus.Instance.listen( 'SendMessage' , function(e){
+                        
+                        var name = typeof e.details.name === 'string' ? e.details.name : '';
+                        var message = typeof e.details.message === 'string' ? e.details.message : '';
+                        
+                        if( name.length && message.length ){
+                            _setup.count++;
+                            _setup.instance.response( message );
+                            console.log( name + ' notifies a new message: [' + message + ']');
+                        }
+                    });
+                    
+                    return this;
+                };
+                
+                return this.init();
+            };
+            
+            document.addEventListener('DOMConentLoaded',function(){
+                console.log('test');
+                var COMPONENTS = {
+                    'counter' : new Counter(),
+                    'messenger1': new Messenger( 'Super Messenger' ),
+                    'messenger2': new Messenger( 'Angry Messenger' ),
+                    'messenger3': new Messenger( 'Killer Messenger' )
+                };
+            });
+        </script>
+    </head>
+    <body>
+        <div id="messenger">
+        
+
+        
+        </div>
+    </body>
+</html>

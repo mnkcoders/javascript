@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TypeScript Tests</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/typescript">
+            
+            class Contacto{
+                
+                private _nombre : String;
+                
+                constructor( datos ){
+                    
+                    this._nombre = typeof datos.nombre !== 'undefined' ? datos.nombre : 'Nuevo Contacto';
+                }
+            }
+            
+            class Cliente extends Contacto{
+                
+                constructor( datos ){
+                    
+                    super.constructor( datos );
+                }
+            }
+            
+            console.log( new Cliente( {
+                'nombre': 'Paco'
+            }) );
+            
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+    </body>
+</html>
