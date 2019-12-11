@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <script type="text/javascript">
+            /**
+             * @returns {external}
+             */
+            function external(){
+                
+                var _content = {
+                    'internal': new internal()
+                };
+                
+                function internal(){
+                    
+                    this.show = () => { console.log( this ); };
+                    
+                    return this;
+                }
+                /**
+                 * @returns {external}
+                 */
+                this.show = () => {
+                    
+                    _content.internal.show();
+                    
+                    console.log( this );
+                    
+                    return this;
+                };
+                
+                
+                return this;
+            }
+            
+            (new external()).show();
+            
+        </script>
+    </body>
+</html>

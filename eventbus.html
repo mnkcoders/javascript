@@ -16,7 +16,7 @@
               
                 var _setup = {
                     'instance': this,
-                    'inputs': {'txt':null,'btn':null},
+                    'inputs': {'txt':null,'btn':null,'lbl':null},
                     'name': name || 'Messenger',
                     'message': '',
                     'timestamp': (new Date()).getTime(),
@@ -30,28 +30,29 @@
                  */
                 this.send = function( message ){
                     
-                    EventBus.Instance.register( 'SendMessage' , {
+                    EventBus.Instance.send( 'SendMessage' , {
                         'name': _setup.name,
                         'message': message
-                    } ).dispatch('SendMessage');
+                    } );
                     
                     return this;
                 };
                 /**
                  * @returns {Messenger}
                  */
-                this.bind = function(){
+                this.listen = function(){
                     
                     EventBus.Instance.listen( 'UpdateStatus' , function(e){
                         
-                        if( typeof e.details.message === 'string' && e.details.message.length ){
+                        if( typeof e.detail.message === 'string' && e.detail.message.length ){
                             
-                            _setup.message = e.details.message || '';
+                            _setup.message = e.detail.message;
                             
-                            var count = e.details.counter || 0;
+                            var count = e.detail.counter || 0;
                             
                             if( count ){
-                                console.log('Validando el mensaje nº ' + count );
+                                console.log(_setup.name + ' est&aacute; leyendo el mensaje nº ' + count );
+                                _setup.inputs.lbl.innerHTML = _setup.message;
                             }
                             
                             _setup.status = count > 9 ? 'completed' : 'updated';
@@ -59,7 +60,7 @@
                         else{
                             _setup.status = 'error';
                         }
-                        _setup.timestamp = (new Data()).getTime();
+                        _setup.timestamp = (new Date()).getTime();
                         
                         console.log( 'Status: ' + _setup.status );
                     });
@@ -69,10 +70,15 @@
                  * 
                  * @returns {Messenger}
                  */
-                this.render = function(){            
+                this.render = function(){
+                    
+                    document.addEventListener('DOMContentLoaded',function(){
                             _setup.inputs.txt = document.createElement('input');
                             _setup.inputs.txt.type = 'text';
                             _setup.inputs.txt.placeholder = 'Write to ' + _setup.name;
+                            
+                            _setup.inputs.lbl = document.createElement('label');
+                            _setup.inputs.lbl.innerHTML = '<i>waiting...</i>';
 
                             _setup.inputs.btn = document.createElement('button');
                             _setup.inputs.btn.type = 'button';
@@ -81,9 +87,9 @@
         
                                     e.preventDefault();
 
-                                    var msg = document.getElementById('message');
-                                    if( msg.length ){
-                                        _setup.instance.send( msg );
+                                    var message = _setup.inputs.txt.value;
+                                    if( message.length ){
+                                        _setup.instance.send( message );
                                         console.log(_setup.name + ' is sending a message ...');
                                     }
                                     else{
@@ -96,20 +102,22 @@
                             var box = document.createElement('div');
                             box.appendChild(_setup.inputs.txt);
                             box.appendChild(_setup.inputs.btn);
-                            console.log(box);
+                            box.appendChild(_setup.inputs.lbl);
+                            //console.log(box);
                             document.getElementById('messenger').appendChild(box);
+                    });
 
-                    return this.bind();
+                    return this;
                 };
               
         
-                return this.render();
+                return this.render().listen();
             };
             /**
              * 
-             * @returns {Counter}
+             * @returns {Server}
              */
-            function Counter(){
+            function Server(){
                 
                 var _setup = {
                     'instance': this,
@@ -117,19 +125,18 @@
                 };
                 /**
                  * @param {String} message
-                 * @returns {Counter}
+                 * @returns {Server}
                  */
                 this.response = function( message ){
                     
                     var elapsed = parseInt( Math.random() * 5000 ) + 3000;
-                    console.log( 'Waiting ' + (elapsed / 1000) + ' seconds for response ...');
+                    console.log( 'Waiting ' + parseFloat(elapsed / 1000).toFixed(2) + ' seconds for response ...');
                     window.setTimeout( function(){
-                    
-        
-                            EventBus.Instance.register( 'UpdateStatus' , {
+
+                            EventBus.Instance.send( 'UpdateStatus' , {
                                 'message': message,
                                 'counter': _setup.count
-                            } ).dispatch('UpdateStatus');
+                            } );
                             
 
                     }, elapsed );
@@ -137,14 +144,14 @@
                     return this;
                 };
                 /**
-                 * @returns {Counter}
+                 * @returns {Server}
                  */
-                this.init = function(){
+                this.listen = function(){
                     
                     EventBus.Instance.listen( 'SendMessage' , function(e){
-                        
-                        var name = typeof e.details.name === 'string' ? e.details.name : '';
-                        var message = typeof e.details.message === 'string' ? e.details.message : '';
+                        //console.log(e.detail);
+                        var name = typeof e.detail.name === 'string' ? e.detail.name : '';
+                        var message = typeof e.detail.message === 'string' ? e.detail.message : '';
                         
                         if( name.length && message.length ){
                             _setup.count++;
@@ -156,18 +163,17 @@
                     return this;
                 };
                 
-                return this.init();
+                return this.listen();
             };
             
-            document.addEventListener('DOMConentLoaded',function(){
-                console.log('test');
-                var COMPONENTS = {
-                    'counter' : new Counter(),
-                    'messenger1': new Messenger( 'Super Messenger' ),
-                    'messenger2': new Messenger( 'Angry Messenger' ),
-                    'messenger3': new Messenger( 'Killer Messenger' )
+            
+            
+            var COMPONENTS = {
+                'counter' : new Server(),
+                'messenger1': new Messenger( 'Super Messenger' ),
+                'messenger2': new Messenger( 'Angry Messenger' ),
+                'messenger3': new Messenger('Killer Messenger')
                 };
-            });
         </script>
     </head>
     <body>

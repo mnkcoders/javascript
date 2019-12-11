@@ -7,51 +7,21 @@ function EventBus(){
         /**
          * @type Element
          */
-        'element': document.createElement('eventbus'),  
-        /**
-         * @type CustomEvent
-         */
-        'listeners': []
+        'element': document.createElement('eventbus'),
     };
     /**
-     * @param {String} event
-     * @returns {EventBus}
-     */
-    this.dispatch = function( event ){
-        
-        if( _bus.listeners.hasOwnProperty(event)){
- 
-            _bus.element.dispatchEvent( _bus.listeners[event] );
-        }
-        
-        return this;
-    };
-    /**
-     * 
      * @param {String} event
      * @param {Object|String|Number|Boolean} data
      * @returns {EventBus}
      */
-    this.register = ( event , data ) => {
+    this.send = ( event , data ) => {
         
-        if( !_bus.listeners.hasOwnProperty(event)){
- 
-            _bus.listeners[event] = new CustomEvent( event , {'detail': data });
-        }
+        _bus.element.dispatchEvent( new CustomEvent(
+                event ,
+                {'detail': data }) );
         
         return this;
     };
-    /**
-     * @param {String} event
-     * @param {Object} data
-     * @returns {EventBus}
-     */
-    this.registerDispatch = ( event , data ) => this.register( event , data ).dispatch( event );
-    /**
-     * @param {String} event
-     * @returns {Boolean}
-     */
-    this.check = ( event ) => { _bus.listeners.hasOwnProperty( event ); };
     /**
      * 
      * @param {String} event
