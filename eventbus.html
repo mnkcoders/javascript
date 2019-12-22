@@ -1,186 +1,37 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>EventBus</title>
+        <title>Event Bus V2</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="EventBus.js"></script>
-        
-        <script type="text/javascript">
-            /**
-             * 
-             * @param {String} name
-             * @returns {Messenger}
-             */
-            function Messenger( name ){
-              
-                var _setup = {
-                    'instance': this,
-                    'inputs': {'txt':null,'btn':null,'lbl':null},
-                    'name': name || 'Messenger',
-                    'message': '',
-                    'timestamp': (new Date()).getTime(),
-                    'status': 'waiting'
-                };
-                
-                /**
-                 * 
-                 * @param {String} message
-                 * @returns {Messenger}
-                 */
-                this.send = function( message ){
-                    
-                    EventBus.Instance.send( 'SendMessage' , {
-                        'name': _setup.name,
-                        'message': message
-                    } );
-                    
-                    return this;
-                };
-                /**
-                 * @returns {Messenger}
-                 */
-                this.listen = function(){
-                    
-                    EventBus.Instance.listen( 'UpdateStatus' , function(e){
-                        
-                        if( typeof e.detail.message === 'string' && e.detail.message.length ){
-                            
-                            _setup.message = e.detail.message;
-                            
-                            var count = e.detail.counter || 0;
-                            
-                            if( count ){
-                                console.log(_setup.name + ' est&aacute; leyendo el mensaje nº ' + count );
-                                _setup.inputs.lbl.innerHTML = _setup.message;
-                            }
-                            
-                            _setup.status = count > 9 ? 'completed' : 'updated';
-                        }
-                        else{
-                            _setup.status = 'error';
-                        }
-                        _setup.timestamp = (new Date()).getTime();
-                        
-                        console.log( 'Status: ' + _setup.status );
-                    });
-                    return this;
-                };
-                /**
-                 * 
-                 * @returns {Messenger}
-                 */
-                this.render = function(){
-                    
-                    document.addEventListener('DOMContentLoaded',function(){
-                            _setup.inputs.txt = document.createElement('input');
-                            _setup.inputs.txt.type = 'text';
-                            _setup.inputs.txt.placeholder = 'Write to ' + _setup.name;
-                            
-                            _setup.inputs.lbl = document.createElement('label');
-                            _setup.inputs.lbl.innerHTML = '<i>waiting...</i>';
-
-                            _setup.inputs.btn = document.createElement('button');
-                            _setup.inputs.btn.type = 'button';
-                            _setup.inputs.btn.innerHTML = 'Send';
-                            _setup.inputs.btn.addEventListener('click',function(e){
-        
-                                    e.preventDefault();
-
-                                    var message = _setup.inputs.txt.value;
-                                    if( message.length ){
-                                        _setup.instance.send( message );
-                                        console.log(_setup.name + ' is sending a message ...');
-                                    }
-                                    else{
-                                        console.log(_setup.name + ' write something!');
-                                    }
-                                    
-                                    return false;
-                            });
-                            
-                            var box = document.createElement('div');
-                            box.appendChild(_setup.inputs.txt);
-                            box.appendChild(_setup.inputs.btn);
-                            box.appendChild(_setup.inputs.lbl);
-                            //console.log(box);
-                            document.getElementById('messenger').appendChild(box);
-                    });
-
-                    return this;
-                };
-              
-        
-                return this.render().listen();
-            };
-            /**
-             * 
-             * @returns {Server}
-             */
-            function Server(){
-                
-                var _setup = {
-                    'instance': this,
-                    'count': 0
-                };
-                /**
-                 * @param {String} message
-                 * @returns {Server}
-                 */
-                this.response = function( message ){
-                    
-                    var elapsed = parseInt( Math.random() * 5000 ) + 3000;
-                    console.log( 'Waiting ' + parseFloat(elapsed / 1000).toFixed(2) + ' seconds for response ...');
-                    window.setTimeout( function(){
-
-                            EventBus.Instance.send( 'UpdateStatus' , {
-                                'message': message,
-                                'counter': _setup.count
-                            } );
-                            
-
-                    }, elapsed );
-                    
-                    return this;
-                };
-                /**
-                 * @returns {Server}
-                 */
-                this.listen = function(){
-                    
-                    EventBus.Instance.listen( 'SendMessage' , function(e){
-                        //console.log(e.detail);
-                        var name = typeof e.detail.name === 'string' ? e.detail.name : '';
-                        var message = typeof e.detail.message === 'string' ? e.detail.message : '';
-                        
-                        if( name.length && message.length ){
-                            _setup.count++;
-                            _setup.instance.response( message );
-                            console.log( name + ' notifies a new message: [' + message + ']');
-                        }
-                    });
-                    
-                    return this;
-                };
-                
-                return this.listen();
-            };
-            
-            
-            
-            var COMPONENTS = {
-                'counter' : new Server(),
-                'messenger1': new Messenger( 'Super Messenger' ),
-                'messenger2': new Messenger( 'Angry Messenger' ),
-                'messenger3': new Messenger('Killer Messenger')
-                };
-        </script>
     </head>
     <body>
-        <div id="messenger">
-        
-
-        
-        </div>
+        <script type="module">
+            
+            import {EventBus} from './event-bus.js';
+            
+            console.log("We're meeting up our new mates...");
+            
+            EventBus.Instance.bind( 'Greet' , function( e ){
+                var name = e.data || 'no name';
+                console.log( 'Hi, ' + name + '!!');
+            }).bind( 'Greet' , function(e){
+                var name = e.data || 'no name';
+                console.log( 'Nice to meet you, ' + name );
+            }).bind( 'Greet' , function(e){
+                var name = e.data || 'no name';
+                console.log('I like to shout your name, ' + name);
+            });
+            
+            window.setTimeout( function(){
+                
+                EventBus.Instance.run( 'Greet' , 'Walter');
+                
+                console.log( EventBus.Instance.dump() );
+                
+            },4000 );
+            
+            
+        </script>
     </body>
 </html>
