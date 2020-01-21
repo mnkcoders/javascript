@@ -1,17 +1,12 @@
-function CoderTools() {
 
-    
-}
-
-
-CoderTools.Geolocation = function () {
+Location = function () {
 
     return this;
 };
 
-CoderTools.Geolocation.Current = function(){
+Location.Current = function(){
     
-    window.navigator.geolocation.getCurrentPosition(position => {
+    window.navigator.geolocation.getCurrentPosition( position => {
         console.log(position);
     }, error => {
         console.error(error);
@@ -19,7 +14,7 @@ CoderTools.Geolocation.Current = function(){
 };
 
 
-CoderTools.HTML = function( element, attributes , content ){
+HTML = function( element, attributes , content ){
     
     var _node = {
         'name': typeof element !== 'undefined' ? element : 'div',
