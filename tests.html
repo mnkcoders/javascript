@@ -40,7 +40,21 @@
             }
             
             (new external()).show();
+            /**
+             * @returns {String}
+             */
+            function SpecialClass(){
+            
+                this.toString = () => SpecialClass.name;
+                
+                return this;
+            }
+            
+            console.log( (new SpecialClass()).toString() );
             
         </script>
     </body>
 </html>
+
+
+
