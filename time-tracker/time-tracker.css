@@ -1,0 +1,112 @@
+body{
+    font-family: Roboto;
+    font-weight: 300;
+    background-color: #fafafa;
+    margin: 0;
+}
+.container{
+    padding: 20px;
+    margin: 0;
+}
+.container:after{
+    content: '';
+    display: block;
+    height: 0;
+    clear:both;
+}
+.container.solid{
+    background-color: #ffffff;
+    background-image: -webkit-lineargradient(#ffffff,#fafafa);
+}
+.container.fixed{ position: fixed; }
+.container.bottom{ bottom: 0; left: 0; right: 0;}
+.container.center{
+    text-align: center;
+}
+.left{ float: left; }
+.right{ float: right; }
+.link{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: ease-in 200ms;
+    color: #959595;
+}
+.link:hover,.link:active{
+    color: #26a69a;
+}
+select{
+    padding: 10px 40px;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 4px;
+    background: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: ease-in 200ms;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #2bbbad;
+}
+select:focus,select:active{
+    outline: none;
+    border: 1px solid rgba(0,0,0,0.25);
+    box-shadow: 0 0 8px #2bbbad;
+}
+.button{
+    padding: 10px 40px;
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #26a69a;
+    border: none;
+    text-align: center;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 24px;
+    letter-spacing: 1px;
+    color: #ffffff;
+    cursor: pointer;
+    width: 200px;
+}
+button:focus{
+    outline: none;
+}
+button.active{
+    background-color: #2bbbad;
+}
+button.centered{
+    margin: auto;
+}
+ul.collection{
+    margin: 40px auto;
+    padding: 20px;
+    list-style-type: none;
+}
+ul.collection > li.item{
+    background-color: #ffffff;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    padding: 8px 16px;
+    text-align: center;
+    font-weight: 300;
+    margin: 16px 0;
+    transition: ease-in 200ms;
+    cursor: pointer;
+}
+ul.collection > li.item:hover{
+    box-shadow: 0 0 8px #26a69a;
+}
+ul.collection > li.item.active{
+    background-color: #26a69a;
+    color: #ffffff;
+}
+
+ul.inline:after{
+    content: '';
+    display: block;
+    height: 0;
+    clear: both;
+}
+ul.inline > li{ display: inline-block; }
+

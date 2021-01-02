@@ -1,0 +1,28 @@
+<html>
+    
+    <head>
+        <title>TimeTracker</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet"  type="text/css" href="time-tracker.css" />
+    </head>
+    <body>
+        
+        <div class="container solid center">
+            <select id="tasks" class="select left">
+                
+            </select>
+            <button id="timer" class="button timer">Start</button>
+        </div>
+        <ul id="sessions" class="container collection">
+
+        </ul>
+        
+        <ul class="container fixed bottom inline solid center">
+            <li class="summary">Summary <span id="summary"></span></li>
+            <li class="right"><button id="reset" class="link">Clear</button></li>
+        </ul>
+
+        <script type="text/javascript" src="time-tracker.js"></script>
+        
+    </body>
+</html>
